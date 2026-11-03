@@ -22,6 +22,7 @@ inventory_items = load_json_file('inventory.json')
 orders = load_json_file('orders.json')
 demand_forecasts = load_json_file('demand_forecasts.json')
 backlog_items = load_json_file('backlog_items.json')
+restock_catalog = load_json_file('restock_catalog.json')
 
 # Load spending data
 spending_data = load_json_file('spending.json')
