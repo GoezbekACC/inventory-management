@@ -43,7 +43,7 @@
         <button
           type="button"
           class="place-order-btn"
-          :disabled="items.length === 0 || submitting || loading"
+          :disabled="items.length === 0 || submitting || loading || stale"
           @click="placeOrder"
         >
           {{ submitting ? t('restocking.placingOrder') : t('restocking.placeOrder') }}
@@ -121,6 +121,10 @@ const trendClass = (trend) =>
 
 const trendLabel = (trend) => (['increasing', 'stable', 'decreasing'].includes(trend) ? t(`trends.${trend}`) : trend)
 
+// True from the moment the slider moves until fresh recommendations arrive, so the
+// displayed items can't be ordered against a budget they were not computed for.
+const stale = ref(false)
+
 let debounceTimer = null
 let requestId = 0
 
@@ -132,12 +136,14 @@ const loadRecommendations = async () => {
     const data = await api.getRestockRecommendations(budget.value)
     if (myId !== requestId) return // stale response, a newer request is in flight
     items.value = data.items || []
+    stale.value = false
     totalCost.value = data.total_cost || 0
     loaded.value = true
   } catch (err) {
     if (myId !== requestId) return
     console.error('Load error:', err)
     error.value = t('restocking.loadError')
+    stale.value = false
   } finally {
     if (myId === requestId) loading.value = false
   }
@@ -145,6 +151,7 @@ const loadRecommendations = async () => {
 
 // Debounce slider changes so dragging doesn't fire a request per step.
 watch(budget, () => {
+  stale.value = true
   placedOrder.value = null
   clearTimeout(debounceTimer)
   debounceTimer = setTimeout(loadRecommendations, 300)

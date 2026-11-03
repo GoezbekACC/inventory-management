@@ -402,6 +402,10 @@ def create_restock_order(request: RestockOrderRequest):
         raise HTTPException(status_code=400, detail="Order must contain at least one item")
     catalog = {c['item_sku']: c for c in restock_catalog}
     names = {d['item_sku']: d['item_name'] for d in demand_forecasts}
+    # Duplicate SKUs would produce duplicate rows (and duplicate v-for keys in the UI)
+    skus = [l.item_sku for l in request.items]
+    if len(skus) != len(set(skus)):
+        raise HTTPException(status_code=400, detail="Duplicate SKUs in order")
     lines = []
     for line in request.items:
         cat = catalog.get(line.item_sku)
@@ -415,6 +419,10 @@ def create_restock_order(request: RestockOrderRequest):
             'line_total': round(line.quantity * cat['unit_cost'], 2),
             'lead_time_days': cat['lead_time_days'],
         })
+    total_cost = round(sum(l['line_total'] for l in lines), 2)
+    # Enforce the budget server-side; the client-supplied budget is otherwise untrusted
+    if request.budget is not None and total_cost > request.budget:
+        raise HTTPException(status_code=400, detail="Order total exceeds budget")
     lead_time = max(l['lead_time_days'] for l in lines)
     now = datetime.now().replace(microsecond=0)
     seq = len(submitted_restock_orders) + 1
@@ -423,7 +431,7 @@ def create_restock_order(request: RestockOrderRequest):
         'order_number': f"RST-{now.year}-{seq:04d}",
         'order_date': now.isoformat(),
         'items': lines,
-        'total_cost': round(sum(l['line_total'] for l in lines), 2),
+        'total_cost': total_cost,
         'status': 'Submitted',
         'lead_time_days': lead_time,
         'expected_delivery': (now + timedelta(days=lead_time)).isoformat(),

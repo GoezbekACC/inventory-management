@@ -42,6 +42,17 @@ class TestRestockRecommendations:
         assert large > small
 
 
+class TestRestockPartialFill:
+    """Partial-fill rule: buy as many whole units as the remaining budget allows."""
+
+    def test_partial_fill_uses_whole_units(self, client):
+        data = client.get("/api/restock/recommendations?budget=1000").json()
+        assert data["total_cost"] <= 1000
+        for i in data["items"]:
+            assert isinstance(i["quantity"], int) and i["quantity"] >= 1
+            assert abs(i["line_total"] - i["quantity"] * i["unit_cost"]) < 0.01
+
+
 class TestRestockOrders:
     """Test suite for submitted restock orders."""
 
@@ -84,3 +95,23 @@ class TestRestockOrders:
         second = self._post(client, [{"item_sku": "FLT-405", "quantity": 1}]).json()
         data = client.get("/api/restock-orders").json()
         assert [o["id"] for o in data] == [second["id"], first["id"]]
+
+    def test_duplicate_skus_rejected(self, client):
+        response = self._post(client, [
+            {"item_sku": "WDG-001", "quantity": 1},
+            {"item_sku": "WDG-001", "quantity": 2},
+        ])
+        assert response.status_code == 400
+
+    def test_over_budget_rejected(self, client):
+        response = client.post("/api/restock-orders", json={
+            "items": [{"item_sku": "WDG-001", "quantity": 10}], "budget": 849.99
+        })
+        assert response.status_code == 400
+        assert client.get("/api/restock-orders").json() == []
+
+    def test_within_budget_accepted(self, client):
+        response = client.post("/api/restock-orders", json={
+            "items": [{"item_sku": "WDG-001", "quantity": 10}], "budget": 850
+        })
+        assert response.status_code == 201
