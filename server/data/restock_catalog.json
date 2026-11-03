@@ -1,0 +1,11 @@
+[
+  {"item_sku": "WDG-001", "unit_cost": 85.00, "supplier_name": "Apex Components", "lead_time_days": 14},
+  {"item_sku": "BRG-102", "unit_cost": 120.00, "supplier_name": "Nordic Bearings", "lead_time_days": 21},
+  {"item_sku": "GSK-203", "unit_cost": 65.00, "supplier_name": "ThermoSeal Ltd", "lead_time_days": 10},
+  {"item_sku": "MTR-304", "unit_cost": 780.00, "supplier_name": "Voltex Motors", "lead_time_days": 35},
+  {"item_sku": "FLT-405", "unit_cost": 42.00, "supplier_name": "CleanFlow Filters", "lead_time_days": 7},
+  {"item_sku": "VLV-506", "unit_cost": 210.00, "supplier_name": "Hydra Valves", "lead_time_days": 28},
+  {"item_sku": "PSU-501", "unit_cost": 18.99, "supplier_name": "PowerGrid Supply", "lead_time_days": 12},
+  {"item_sku": "SNR-420", "unit_cost": 95.00, "supplier_name": "SensTech", "lead_time_days": 18},
+  {"item_sku": "CTL-330", "unit_cost": 340.00, "supplier_name": "LogicWorks", "lead_time_days": 30}
+]

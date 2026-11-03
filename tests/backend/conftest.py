@@ -61,3 +61,11 @@ def sample_order():
         "total_value": 87799.5,
         "actual_delivery": "2025-01-20T10:19:00"
     }
+
+
+@pytest.fixture(autouse=True)
+def clear_restock_orders():
+    """Reset in-memory restock orders after each test (module state is shared)."""
+    import main
+    yield
+    main.submitted_restock_orders.clear()

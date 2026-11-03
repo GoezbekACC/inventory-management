@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -112,6 +113,13 @@ export default {
     onTimeDelivery: 'On-Time Delivery',
     itemsCount: '{count} items',
     quantity: 'Qty',
+    submittedOrders: {
+      title: 'Submitted Orders',
+      empty: 'No restock orders have been submitted yet',
+      error: 'Failed to load submitted orders',
+      leadTime: 'Lead Time (days)',
+      total: 'Total'
+    },
     table: {
       orderNumber: 'Order Number',
       orderId: 'Order ID',
@@ -207,6 +215,33 @@ export default {
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    description: 'Plan restock purchases based on forecasted demand and your budget',
+    budget: 'Budget',
+    plannedSpend: 'Planned Spend',
+    remaining: 'Remaining',
+    recommendations: 'Recommended Purchases',
+    empty: 'No restock recommendations for this budget',
+    placeOrder: 'Place Order',
+    placingOrder: 'Placing order...',
+    orderPlaced: 'Order {orderNumber} placed successfully.',
+    viewOrders: 'View submitted orders',
+    loadError: 'Failed to load recommendations',
+    orderError: 'Failed to place order',
+    days: '{count} days',
+    table: {
+      sku: 'SKU',
+      itemName: 'Item Name',
+      trend: 'Demand Trend',
+      quantity: 'Quantity',
+      unitCost: 'Unit Cost',
+      lineTotal: 'Line Total',
+      leadTime: 'Lead Time'
+    }
   },
 
   // Trends
